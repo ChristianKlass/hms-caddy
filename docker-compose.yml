@@ -1,0 +1,25 @@
+version: '3.6'
+
+volumes:
+  caddy: {}
+
+networks:
+  monitoring:
+    external: true
+
+services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    hostname: caddy
+    env_file:
+      - './env/common.env'
+    ports:
+      - 80:80
+    expose:
+      - '2020'
+    volumes:
+      - caddy:/data
+      - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - monitoring
