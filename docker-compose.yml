@@ -6,6 +6,8 @@ volumes:
 networks:
   monitoring:
     external: true
+  hms:
+    external: true
 
 services:
   caddy:
@@ -23,3 +25,4 @@ services:
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
     networks:
       - monitoring
+      - hms
