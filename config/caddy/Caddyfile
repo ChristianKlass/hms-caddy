@@ -14,6 +14,10 @@
   reverse_proxy jackett:9117
 }
 
+downloads.mediaserver:80 {
+  reverse_proxy torrent:8080
+}  
+
 :2020 {
   metrics
 }

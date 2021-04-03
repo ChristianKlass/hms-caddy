@@ -18,3 +18,18 @@ services:
       - '${USERDIR}/volumes/radarr/config:/config:z'
     networks: 
       - 'hms'
+
+  torrent:
+    image: 'linuxserver/qbittorrent:latest'
+    container_name: torrent
+    restart: always
+    env_file:
+      - '../env/common.env'
+      - '../env/qbit.env'
+    expose:
+      - '8080'
+    volumes:
+      - '${USERDIR}/volumes/qbittorrent/config:/config:z'
+      - '${USERDIR}/Downloads/completed:/downloads'
+    networks: 
+      - 'hms'
