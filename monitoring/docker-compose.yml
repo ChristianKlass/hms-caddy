@@ -1,0 +1,62 @@
+version: '3.6'
+
+networks:
+  monitoring:
+    external: true
+  storage:
+    external: true
+
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: always
+    expose:
+      - '9090'
+    env_file:
+      - '../env/common.env'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.external-url=http://${ROOT_URL}/prometheus'
+    volumes:
+      - '../config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+    networks:
+      - storage
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    env_file:
+      - '../env/common.env'
+      - '../env/grafana.env'
+    expose:
+      - '3000'
+    volumes:
+      - '${USERDIR}/volumes/grafana/data:/var/lib/grafana:z'
+      - '${USERDIR}/volumes/grafana/plugins:/var/lib/grafana/plugins:rw'
+    networks:
+      - storage
+      - monitoring
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    env_file:
+      - '../env/common.env'
+    user: root
+    privileged: true
+    restart: always
+    expose:
+      - '9100'
+    volumes:
+      - '/proc:/host/proc:ro'
+      - '/sys:/host/sys:ro'
+      - '/:/rootfs:ro'
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - monitoring
