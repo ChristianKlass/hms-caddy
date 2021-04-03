@@ -22,6 +22,10 @@ home.mediaserver:80/radarr* {
   reverse_proxy radarr:7878
 }
 
+home.mediaserver:80/jellyfin* {
+  reverse_proxy jellyfin:8096
+}
+
 downloads.mediaserver:80 {
   reverse_proxy torrent:8080
 }  

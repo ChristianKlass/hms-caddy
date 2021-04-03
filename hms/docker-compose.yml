@@ -5,6 +5,25 @@ networks:
     external: true
 
 services:
+  jellyfin:
+    image: linuxserver/jellyfin
+    container_name: jellyfin
+    restart: always
+    env_file:
+      - '../env/common.env'
+    expose:
+      - '8096'
+    ports:
+      - '8096:8096'
+      - '7359:7359/udp' #for clients to discover
+      - '1900:1900/udp' #DLNA clients
+    volumes:
+      - '${USERDIR}/volumes/jellyfin/config:/config:z'
+      - '${USERDIR}/media/tv-shows:/data/tv-shows'
+      - '${USERDIR}/media/movies:/data/movies'
+    networks: 
+      - 'hms'
+
   radarr:
     image: linuxserver/radarr:nightly
     container_name: radarr
