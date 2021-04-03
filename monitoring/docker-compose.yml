@@ -60,3 +60,16 @@ services:
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
     networks:
       - monitoring
+
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    restart: always
+    command: -H unix:///var/run/docker.sock
+    expose:
+      - '9000'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - '${USERDIR}/volumes/portainer/data:/data'
+    networks:
+      - monitoring

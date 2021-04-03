@@ -10,6 +10,10 @@ monitoring.mediaserver:80/prometheus* {
   reverse_proxy prometheus:9090
 }
 
+portainer.mediaserver:80/* {
+  reverse_proxy portainer:9000
+}
+
 home.mediaserver:80/jackett* {
   reverse_proxy jackett:9117
 }
