@@ -5,6 +5,44 @@ networks:
     external: true
 
 services:
+  radarr:
+    image: linuxserver/radarr:nightly
+    container_name: radarr
+    hostname: radarr
+    expose:
+      - '7878'
+    ports:
+      - 7878:7878
+    restart: always
+    env_file:
+      - '../env/common.env'
+    volumes:
+      - '${USERDIR}/volumes/radarr/config:/config:z'
+      - '${USERDIR}/Downloads/completed:/downloads'
+      - '${USERDIR}/media/movies:/movies'
+      - '/etc/localtime:/etc/localtime:ro'
+    networks: 
+      - 'hms'
+
+  sonarr:
+    image: linuxserver/sonarr:latest
+    container_name: sonarr
+    hostname: sonarr
+    expose:
+      - '8989'
+    ports: 
+      - 8989:8989
+    restart: always
+    env_file:
+      - '../env/common.env'
+    volumes:
+      - '${USERDIR}/volumes/sonarr/config:/config:z'
+      - '${USERDIR}/Downloads/completed:/downloads'
+      - '${USERDIR}/media/tv-shows:/tv-shows'
+      - '/etc/localtime:/etc/localtime:ro'
+    networks: 
+      - 'hms'
+
   jackett:
     image: linuxserver/jackett:development
     container_name: jackett

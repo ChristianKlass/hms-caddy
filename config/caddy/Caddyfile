@@ -2,16 +2,24 @@
 	auto_https disable_redirects
 }
 
-:80/grafana* {
+monitoring.mediaserver:80/grafana* {
   reverse_proxy grafana:3000
 }
 
-:80/prometheus* {
+monitoring.mediaserver:80/prometheus* {
   reverse_proxy prometheus:9090
 }
 
-:80/jackett* {
+home.mediaserver:80/jackett* {
   reverse_proxy jackett:9117
+}
+
+home.mediaserver:80/sonarr* {
+  reverse_proxy sonarr:8989
+}
+
+home.mediaserver:80/radarr* {
+  reverse_proxy radarr:7878
 }
 
 downloads.mediaserver:80 {
