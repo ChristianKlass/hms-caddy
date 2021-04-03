@@ -5,6 +5,19 @@ networks:
     external: true
 
 services:
+  muximux:
+    image: linuxserver/muximux
+    container_name: muximux
+    restart: always
+    env_file:
+      - '../env/common.env'
+    expose:
+      - '80'
+    volumes:
+      - '${USERDIR}/volumes/muximux/config:/config:z'
+    networks: 
+      - 'hms'
+  
   jellyfin:
     image: linuxserver/jellyfin
     container_name: jellyfin

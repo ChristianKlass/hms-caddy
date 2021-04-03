@@ -26,6 +26,10 @@ home.mediaserver:80/jellyfin* {
   reverse_proxy jellyfin:8096
 }
 
+home.mediaserver:80/* {
+  reverse_proxy muximux:80
+}
+
 downloads.mediaserver:80 {
   reverse_proxy torrent:8080
 }  
