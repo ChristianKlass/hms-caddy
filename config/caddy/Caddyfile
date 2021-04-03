@@ -10,6 +10,10 @@
   reverse_proxy prometheus:9090
 }
 
+:80/jackett* {
+  reverse_proxy jackett:9117
+}
+
 :2020 {
   metrics
 }

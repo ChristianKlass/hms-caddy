@@ -1,0 +1,20 @@
+version: '3.6'
+
+networks:
+  hms:
+    external: true
+
+services:
+  jackett:
+    image: linuxserver/jackett:development
+    container_name: jackett
+    hostname: jackett
+    restart: always
+    env_file:
+      - '../env/common.env'
+    expose:
+      - '9117'
+    volumes:
+      - '${USERDIR}/volumes/radarr/config:/config:z'
+    networks: 
+      - 'hms'
