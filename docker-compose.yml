@@ -8,6 +8,8 @@ networks:
     external: true
   hms:
     external: true
+  caddy:
+    external: true
 
 services:
   caddy:
@@ -23,6 +25,8 @@ services:
     volumes:
       - caddy:/data
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ${USERDIR}/volumes/caddy/shared/stuff:/shared/stuff
     networks:
       - monitoring
       - hms
+      - caddy

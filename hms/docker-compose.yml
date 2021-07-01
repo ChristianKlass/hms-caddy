@@ -6,7 +6,7 @@ networks:
 
 services:
   muximux:
-    image: linuxserver/muximux
+    image: linuxserver/muximux:version-057352e8
     container_name: muximux
     restart: always
     env_file:
@@ -19,7 +19,7 @@ services:
       - 'hms'
   
   jellyfin:
-    image: linuxserver/jellyfin
+    image: linuxserver/jellyfin:nightly-version-20210618.8-unstable
     container_name: jellyfin
     restart: always
     env_file:
@@ -38,7 +38,7 @@ services:
       - 'hms'
 
   radarr:
-    image: linuxserver/radarr:nightly
+    image: linuxserver/radarr:nightly-version-4.0.0.5093
     container_name: radarr
     hostname: radarr
     expose:
@@ -57,7 +57,7 @@ services:
       - 'hms'
 
   sonarr:
-    image: linuxserver/sonarr:latest
+    image: linuxserver/sonarr:version-3.0.6.1265
     container_name: sonarr
     hostname: sonarr
     expose:
@@ -76,7 +76,7 @@ services:
       - 'hms'
 
   jackett:
-    image: linuxserver/jackett:development
+    image: linuxserver/jackett:version-v0.18.364
     container_name: jackett
     hostname: jackett
     restart: always
