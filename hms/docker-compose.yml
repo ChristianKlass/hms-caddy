@@ -2,11 +2,13 @@ version: '3.6'
 
 networks:
   hms:
+    external: false
+  caddy:
     external: true
 
 services:
   muximux:
-    image: linuxserver/muximux:version-057352e8
+    image: linuxserver/muximux:latest
     container_name: muximux
     restart: always
     env_file:
@@ -17,9 +19,11 @@ services:
       - '${USERDIR}/volumes/muximux/config:/config:z'
     networks: 
       - 'hms'
+      - 'caddy'
+      
   
   jellyfin:
-    image: linuxserver/jellyfin:nightly-version-20210618.8-unstable
+    image: linuxserver/jellyfin:latest
     container_name: jellyfin
     restart: always
     env_file:
@@ -36,9 +40,10 @@ services:
       - '${USERDIR}/media/movies:/data/movies'
     networks: 
       - 'hms'
+      - 'caddy'
 
   radarr:
-    image: linuxserver/radarr:nightly-version-4.0.0.5093
+    image: linuxserver/radarr:latest
     container_name: radarr
     hostname: radarr
     expose:
@@ -50,11 +55,12 @@ services:
       - '../env/common.env'
     volumes:
       - '${USERDIR}/volumes/radarr/config:/config:z'
-      - '${USERDIR}/Downloads/completed:/downloads'
+      - '${USERDIR}/downloads/completed:/downloads'
       - '${USERDIR}/media/movies:/movies'
       - '/etc/localtime:/etc/localtime:ro'
     networks: 
       - 'hms'
+      - 'caddy'
 
   sonarr:
     image: linuxserver/sonarr:version-3.0.6.1265
@@ -69,25 +75,40 @@ services:
       - '../env/common.env'
     volumes:
       - '${USERDIR}/volumes/sonarr/config:/config:z'
-      - '${USERDIR}/Downloads/completed:/downloads'
+      - '${USERDIR}/downloads/completed:/downloads'
       - '${USERDIR}/media/tv-shows:/tv-shows'
       - '/etc/localtime:/etc/localtime:ro'
     networks: 
       - 'hms'
+      - 'caddy'
 
-  jackett:
-    image: linuxserver/jackett:version-v0.18.364
-    container_name: jackett
-    hostname: jackett
+  prowlarr:
+    image: linuxserver/prowlarr:nightly-version-0.1.0.688
+    container_name: prowlarr
     restart: always
-    env_file:
+    ports:
+      - '9696:9696'
+    env_file: 
       - '../env/common.env'
-    expose:
-      - '9117'
-    volumes:
-      - '${USERDIR}/volumes/radarr/config:/config:z'
-    networks: 
+    networks:
       - 'hms'
+      - 'caddy'
+
+
+  # jackett:
+  #   image: linuxserver/jackett:latest
+  #   container_name: jackett
+  #   hostname: jackett
+  #   restart: always
+  #   env_file:
+  #     - '../env/common.env'
+  #   expose:
+  #     - '9117'
+  #   volumes:
+  #     - '${USERDIR}/volumes/radarr/config:/config:z'
+  #   networks: 
+  #     - 'hms'
+  #     - 'caddy'
 
   torrent:
     image: 'linuxserver/qbittorrent:latest'
@@ -100,6 +121,7 @@ services:
       - '8080'
     volumes:
       - '${USERDIR}/volumes/qbittorrent/config:/config:z'
-      - '${USERDIR}/Downloads/completed:/downloads'
+      - '${USERDIR}/downloads/completed:/downloads'
     networks: 
       - 'hms'
+      - 'caddy'

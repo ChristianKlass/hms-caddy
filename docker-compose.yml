@@ -4,10 +4,6 @@ volumes:
   caddy: {}
 
 networks:
-  monitoring:
-    external: true
-  hms:
-    external: true
   caddy:
     external: true
 
@@ -15,18 +11,16 @@ services:
   caddy:
     image: caddy:latest
     container_name: caddy
+    restart: always
     hostname: caddy
     env_file:
       - './env/common.env'
     ports:
       - 80:80
-    expose:
-      - '2020'
+      # - 443:443
     volumes:
       - caddy:/data
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
       - ${USERDIR}/volumes/caddy/shared/stuff:/shared/stuff
     networks:
-      - monitoring
-      - hms
       - caddy

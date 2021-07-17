@@ -1,11 +1,13 @@
 version: '3.6'
 
 networks:
-  monitoring:
+  caddy:
     external: true
   storage:
     external: true
-
+  monitoring:
+    external: false
+    
 services:
   prometheus:
     image: prom/prometheus
@@ -21,6 +23,7 @@ services:
     volumes:
       - '../config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
     networks:
+      - caddy
       - storage
       - monitoring
 
@@ -34,9 +37,9 @@ services:
     expose:
       - '3000'
     volumes:
-      - '${USERDIR}/volumes/grafana/data:/var/lib/grafana:z'
       - '${USERDIR}/volumes/grafana/plugins:/var/lib/grafana/plugins:rw'
     networks:
+      - caddy
       - storage
       - monitoring
 
@@ -72,4 +75,5 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock'
       - '${USERDIR}/volumes/portainer/data:/data'
     networks:
+      - caddy
       - monitoring
