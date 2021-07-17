@@ -31,9 +31,9 @@ services:
     expose:
       - '8096'
     ports:
-      - '8096:8096'
-      - '7359:7359/udp' #for clients to discover
-      - '1900:1900/udp' #DLNA clients
+      # - '8096:8096'
+      - '7359:7359/udp' # for clients to discover
+      - '1900:1900/udp' # DLNA clients
     volumes:
       - '${USERDIR}/volumes/jellyfin/config:/config:z'
       - '${USERDIR}/media/tv-shows:/data/tv-shows'
@@ -48,8 +48,8 @@ services:
     hostname: radarr
     expose:
       - '7878'
-    ports:
-      - 7878:7878
+    # ports:
+    #   - 7878:7878
     restart: always
     env_file:
       - '../env/common.env'
@@ -68,8 +68,8 @@ services:
     hostname: sonarr
     expose:
       - '8989'
-    ports: 
-      - 8989:8989
+    # ports: 
+    #   - 8989:8989
     restart: always
     env_file:
       - '../env/common.env'
@@ -86,8 +86,10 @@ services:
     image: linuxserver/prowlarr:nightly-version-0.1.0.688
     container_name: prowlarr
     restart: always
-    ports:
-      - '9696:9696'
+    expose:
+      - '9696'
+    # ports:
+    #   - '9696:9696'
     env_file: 
       - '../env/common.env'
     networks:
