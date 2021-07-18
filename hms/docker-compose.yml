@@ -124,6 +124,7 @@ services:
     volumes:
       - '${USERDIR}/volumes/qbittorrent/config:/config:z'
       - '${USERDIR}/downloads/completed:/downloads'
+      - '/share:/share'
     networks: 
       - 'hms'
       - 'caddy'
