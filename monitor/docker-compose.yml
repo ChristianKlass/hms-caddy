@@ -9,23 +9,42 @@ networks:
     external: false
     
 services:
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    restart: always
-    expose:
-      - '9090'
-    env_file:
+  vmagent:
+    container_name: vmagent
+    image: victoriametrics/vmagent
+    ports:
+      - 8429:8429
+    env_file: 
       - '../env/common.env'
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--web.external-url=http://${MONITOR_URL}/prometheus'
     volumes:
-      - '../config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+      - ${USERDIR}/volumes/vmagentdata:/vmagentdata
+      - ../config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--promscrape.config=/etc/prometheus/prometheus.yml'
+      - '--remoteWrite.url=http://victoria-metrics:8428/api/v1/write'
     networks:
       - caddy
       - storage
       - monitoring
+    restart: always
+
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
+  #   restart: always
+  #   expose:
+  #     - '9090'
+  #   env_file:
+  #     - '../env/common.env'
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--web.external-url=http://${MONITOR_URL}/prometheus'
+  #   volumes:
+  #     - '../config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
+  #   networks:
+  #     - caddy
+  #     - storage
+  #     - monitoring
 
   grafana:
     image: grafana/grafana:latest
