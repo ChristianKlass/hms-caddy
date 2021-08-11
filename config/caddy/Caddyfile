@@ -27,6 +27,10 @@ prowlarr.klass.local:80/* {
   reverse_proxy prowlarr:9696
 }
 
+bazarr.klass.local:80/* {
+  reverse_proxy bazarr:6767
+}
+
 sonarr.klass.local:80/* {
   reverse_proxy sonarr:8989
 }
@@ -49,6 +53,10 @@ adguard.klass.local:80/* {
 
 downloads.klass.local:80 {
   reverse_proxy torrent:8080
+}  
+
+git.klass.local:80 {
+  reverse_proxy gitea:3000
 }  
 
 :2020 {

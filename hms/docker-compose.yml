@@ -42,6 +42,24 @@ services:
       - 'hms'
       - 'caddy'
 
+  bazarr:
+    image: linuxserver/bazarr:latest
+    container_name: bazarr
+    hostname: bazarr
+    expose:
+      - '6767'
+    restart: always
+    env_file:
+      - '../env/common.env'
+    volumes:
+      - '${USERDIR}/volumes/bazarr/config:/config:z'
+      - '${USERDIR}/media/tv-shows:/tv-shows'
+      - '${USERDIR}/media/movies:/movies'
+      - '/etc/localtime:/etc/localtime:ro'
+    networks: 
+      - 'hms'
+      - 'caddy'
+
   radarr:
     image: linuxserver/radarr:latest
     container_name: radarr
@@ -83,7 +101,7 @@ services:
       - 'caddy'
 
   prowlarr:
-    image: linuxserver/prowlarr:nightly-version-0.1.0.688
+    image: linuxserver/prowlarr:nightly
     container_name: prowlarr
     restart: always
     expose:
