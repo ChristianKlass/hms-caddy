@@ -19,6 +19,10 @@ portainer.klass.local:80/* {
   reverse_proxy portainer:9000
 }
 
+smokeping.klass.local:80/* {
+  reverse_proxy smokeping:80
+}
+
 jackett.klass.local:80/* {
   reverse_proxy jackett:9117
 }
@@ -41,6 +45,10 @@ radarr.klass.local:80/* {
 
 jellyfin.klass.local:80/* {
   reverse_proxy jellyfin:8096
+}
+
+plex.klass.local:80/* {
+  reverse_proxy plex:32400
 }
 
 mediaserver.klass.local:80/* {
