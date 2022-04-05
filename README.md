@@ -123,16 +123,19 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 Then you'll be able to run the `docker-compose` commands.
 
-## Traefik
-I'm going to be using Traefik as my "Ingress Controller". Everyone comes in through Traefik, and cannot access the various containers directly. I may decide to add some authentication in future (require authentication to access everything), maybe using Keycloak and OAuth.
+## Caddy
+I'm going to be using Caddy as my "Ingress Controller". Everyone comes in through Caddy, and (generally) cannot access the various containers directly. I may decide to add some authentication in future (require authentication to access everything), maybe using Keycloak and OAuth.
 
 > Look at me, it almost looks like I know what I'm talking about.
 > I don't, really. I just know these words, and have a rough idea of how they work.
 
 ## Monitoring
-Prometheus and Grafana are gonna be used to do monitoring. They're "industry standard" so I guess they should be very good and ready.
+VMAgent and Grafana are gonna be used to do monitoring. They're "industry standard" so I guess they should be very good and ready.
 
 ### Prometheus
+
+**We're not going to be using Prometheus, but this is good info, so I'll just leave this here.**
+
 Prometheus is going to be used to scrape the various services for metrics. I am pretty sure that I won't be using the metrics for anything, but it's good to collect them, and to *know how* to collect them, I guess. I'll probably be using Victoria Metrics to store the long term metrics.
 
 For some reason, Prometheus requires that we use the `--web.external-url=http://${ROOT_URL}/prometheus'`, since we're using Traefik to do the redirection. I guess we could use Traefik to strip the prefix and all that, but honestly, I'm not bothered by this addition.
@@ -171,17 +174,10 @@ Note: we're able to use the names of the services because we're using Docker. So
 Grafana is a dashboarding platform for visualizing metrics. I just use it to check on the status of the server, basically. I use pre-built dashboards because I don't know how to make 'em, just yet.
 
 The dashboards I'm using are:
-  * [Traefik 2 Dashboard](https://grafana.com/grafana/dashboards/11462) - 11462
+  * [Caddy](https://grafana.com/grafana/dashboards/13460) - 13460
   * [Node Exporter Full](https://grafana.com/grafana/dashboards/1860) - 1860
 
 > In case you're wondering, the number at the back is the ID of the Dashboard's ID. You can just use this number to import the dashboard in Grafana's GUI.
-
-If we're going to serve Grafana on a subpath using Traefik, we need to add the following environment variables into the `./env/grafana.env` file:
-```
-GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana
-GF_SERVER_SERVE_FROM_SUB_PATH=true
-GF_SECURITY_ALLOW_EMBEDDING=true # this is needed to use Grafana with Muximux.
-```
 
 If you need to install plugins for Grafana, you can place the folder in the following location:
 ```
@@ -234,50 +230,17 @@ ports:
   - '1234:8989' #it's always <host-port>:<container-port>
 ```
 
-After you expose them, you need to fumble around in their settings page to find something like `Base URL`. Change the base URL to the address you provided in the `PathPrefix` label for Traefik. It's the second label:
-```
-sonarr:
-  image: linuxserver/sonarr:preview
-  ...
-  labels:
-    - 'traefik.enable=true'
-    - 'traefik.http.routers.sonarr.rule=Host(`${ROOT_URL}`) && PathPrefix(`/sonarr`)'
-    - 'traefik.http.services.sonarr.loadbalancer.server.port=8989'
-```
-
-After you do this, you can remove the `ports` key in the `docker-compose.yml` file, and you can access them with `http://<root-url>/sonarr`.
-
-### Jellyfin
-Jellyfin is the thing that lets you watch your media. It will collect, play, and stream the media. Currently, I will only use it for (legally obtained) movies and TV shows, but I think it can do audiobooks, pictures, and some other stuff, although I haven't tested it yet.
+### Plex
+Plex is the thing that lets you watch your media. It will collect, play, and stream the media. Currently, I will only use it for (legally obtained) movies and TV shows, but I think it can do audiobooks, pictures, and some other stuff, although I haven't tested it yet.
 
 There are also Android and iOS apps that you can download and connect to this server so you can watch/listen/whatever on your mobile devices.
 
-**Note:** For some reason the Android Jellyfin app doesn't work with the `http://${ROOT_URL}/jellyfin` so for now I've just exposed the port so I can access with `http://<ip-address>:8096`.
-
-Maybe one day I'll figure out how to get this to work reliably. It works now, but it doesn't connect consistently. Maybe it's my DNS setting and has absolutely nothing to do with this config. Nevertheless, doing this helps it connect stably, so.. Anyway, to do this, just add the `ports:` config:
-```
-jellyfin:
-  ...
-  ports:
-    - '8096:8096'
-  ...
-```
-
-Read more on their [website](https://jellyfin.org/) and their [Github](https://github.com/jellyfin/jellyfin)
-
-### Muximux
-This is basically the frontend for the whole HMS. However, you need to make sure your Traefik is working properly, because when it asks for the links to the pages to display, it won't work with the Docker internal names. I think it's because it actually loads an iFrame or something like that. Whatever the case, if someone finds a way to make it work, let me know. :D
-
-Otherwise, it's actually a really good piece of software, it's fast and looks good.
-
-Read more about it on their [Github](https://github.com/mescon/Muximux)
-
-### Jackett
-**From their Github:** Jackett works as a proxy server: it translates queries from apps (Sonarr, Radarr, SickRage, CouchPotato, Mylar, Lidarr, DuckieTV, qBittorrent, Nefarious etc.) into tracker-site-specific http queries, parses the html response, then sends results back to the requesting software.
+### Prowlarr
+**From their Website:** Prowlarr is an indexer manager/proxy built on the popular arr .net/reactjs base stack to integrate with your various PVR apps. Prowlarr supports management of both Torrent Trackers and Usenet Indexers. It integrates seamlessly with Lidarr, Mylar3, Radarr, Readarr, and Sonarr offering complete management of your indexers with no per app Indexer setup required (we do it all).
 
 It's a single point of indexing and translates it to a format that Sonarr and Radarr can understand (I think).
 
-Read more about it on their [Github](https://github.com/Jackett/Jackett).
+Read more about it on their [Github](https://wiki.servarr.com/prowlarr).
 
 ### Sonarr
 **From their website:** Radarr is a movie collection manager for Usenet and BitTorrent users. It can monitor multiple RSS feeds for new movies and will interface with clients and indexers to grab, sort, and rename them. It can also be configured to automatically upgrade the quality of existing files in the library when a better quality format becomes available.
