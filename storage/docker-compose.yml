@@ -6,7 +6,7 @@ networks:
 
 services:
   postgres:
-    image: postgres
+    image: postgres:13.5
     container_name: postgres
     restart: always
     expose:
