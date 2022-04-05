@@ -7,38 +7,31 @@ networks:
     external: true
 
 services:
-  muximux:
-    image: linuxserver/muximux:latest
-    container_name: muximux
-    restart: always
+  plex:
+    image: lscr.io/linuxserver/plex
+    container_name: plex
     env_file:
-      - '../env/common.env'
-    expose:
-      - '80'
+    - '../env/common.env'
+    environment:
+      - VERSION=docker
+      - PLEX_CLAIM=claim-m_2gMossXCRN2u99a2Hi
     volumes:
-      - '${USERDIR}/volumes/muximux/config:/config:z'
-    networks: 
-      - 'hms'
-      - 'caddy'
-      
-  
-  jellyfin:
-    image: linuxserver/jellyfin:latest
-    container_name: jellyfin
-    restart: always
-    env_file:
-      - '../env/common.env'
-    expose:
-      - '8096'
-    ports:
-      # - '8096:8096'
-      - '7359:7359/udp' # for clients to discover
-      - '1900:1900/udp' # DLNA clients
-    volumes:
-      - '${USERDIR}/volumes/jellyfin/config:/config:z'
-      - '${USERDIR}/media/tv-shows:/data/tv-shows'
+      - '${USERDIR}/volumes/plex/config:/config:z'
+      - '${USERDIR}/media/tv-shows:/data/tv'
       - '${USERDIR}/media/movies:/data/movies'
-    networks: 
+    ports:
+      - 32400:32400 
+      - 1900:1900/udp 
+      - 3005:3005 
+      - 5353:5353/udp 
+      - 8324:8324 
+      - 32410:32410/udp 
+      - 32412:32412/udp 
+      - 32413:32413/udp 
+      - 32414:32414/udp 
+      - 32469:32469
+    restart: unless-stopped
+    networks:
       - 'hms'
       - 'caddy'
 
@@ -81,7 +74,7 @@ services:
       - 'caddy'
 
   sonarr:
-    image: linuxserver/sonarr:version-3.0.6.1265
+    image: linuxserver/sonarr:latest
     container_name: sonarr
     hostname: sonarr
     expose:
@@ -113,22 +106,6 @@ services:
     networks:
       - 'hms'
       - 'caddy'
-
-
-  # jackett:
-  #   image: linuxserver/jackett:latest
-  #   container_name: jackett
-  #   hostname: jackett
-  #   restart: always
-  #   env_file:
-  #     - '../env/common.env'
-  #   expose:
-  #     - '9117'
-  #   volumes:
-  #     - '${USERDIR}/volumes/radarr/config:/config:z'
-  #   networks: 
-  #     - 'hms'
-  #     - 'caddy'
 
   torrent:
     image: 'linuxserver/qbittorrent:latest'
