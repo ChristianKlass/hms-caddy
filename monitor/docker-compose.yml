@@ -22,29 +22,30 @@ services:
     command:
       - '--promscrape.config=/etc/prometheus/prometheus.yml'
       - '--remoteWrite.url=http://victoria-metrics:8428/api/v1/write'
+      - '--promscrape.config.strictParse=false'
     networks:
       - caddy
       - storage
       - monitoring
     restart: always
 
-  # prometheus:
-  #   image: prom/prometheus
-  #   container_name: prometheus
-  #   restart: always
-  #   expose:
-  #     - '9090'
-  #   env_file:
-  #     - '../env/common.env'
-  #   command:
-  #     - '--config.file=/etc/prometheus/prometheus.yml'
-  #     - '--web.external-url=http://${MONITOR_URL}/prometheus'
-  #   volumes:
-  #     - '../config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro'
-  #   networks:
-  #     - caddy
-  #     - storage
-  #     - monitoring
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: always
+    environment:
+      - '--enable_load_reader=true'
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - caddy 
+      - storage
+      - monitoring
 
   grafana:
     image: grafana/grafana:latest
