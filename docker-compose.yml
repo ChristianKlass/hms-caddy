@@ -1,4 +1,4 @@
-version: '3.6'
+version: "3.6"
 
 volumes:
   caddy: {}
@@ -14,12 +14,12 @@ services:
     restart: always
     hostname: caddy
     env_file:
-      - './env/common.env'
+      - "./env/common.env"
     ports:
       - 80:80
     volumes:
       - caddy:/data
       - ./config/caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ${USERDIR}/downloads/completed:/shared/stuff
+      - ${USERDIR}/downloads/completed/fileshare:/shared/stuff
     networks:
       - caddy

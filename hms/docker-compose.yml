@@ -1,4 +1,4 @@
-version: '3.6'
+version: "3.6"
 
 networks:
   hms:
@@ -7,119 +7,133 @@ networks:
     external: true
 
 services:
-  plex:
-    image: lscr.io/linuxserver/plex
-    container_name: plex
-    env_file:
-    - '../env/common.env'
-    environment:
-      - VERSION=docker
-      - PLEX_CLAIM=claim-m_2gMossXCRN2u99a2Hi
+  jellyfin:
+    image: linuxserver/jellyfin
+    container_name: jellyfin
+    # user: "${PUID}:${PGID}"
     volumes:
-      - '${USERDIR}/volumes/plex/config:/config:z'
-      - '${USERDIR}/media/tv-shows:/data/tv'
-      - '${USERDIR}/media/movies:/data/movies'
-    ports:
-      - 32400:32400 
-      - 1900:1900/udp 
-      - 3005:3005 
-      - 5353:5353/udp 
-      - 8324:8324 
-      - 32410:32410/udp 
-      - 32412:32412/udp 
-      - 32413:32413/udp 
-      - 32414:32414/udp 
-      - 32469:32469
-    restart: unless-stopped
+      - "${USERDIR}/volumes/jellyfin/config:/config"
+      - "${USERDIR}/jellyfin/config/cache:/cache"
+      - "${USERDIR}/media/books:/books"
+      - "${USERDIR}/media/tv-shows:/data/tv-shows"
+      - "${USERDIR}/media/movies:/data/movies"
+    restart: "unless-stopped"
+    # Optional - alternative address used for autodiscovery
+    env_file:
+      - "../env/common.env"
+    environment:
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.${DOMAIN}
     networks:
-      - 'hms'
-      - 'caddy'
+      - "hms"
+      - "caddy"
+    ports:
+      - 8096:8096
+      - 1900:1900/udp
+      - 7359:7359/udp
+
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    # user: "${PUID}:${PGID}"
+    env_file:
+      - "../env/common.env"
+    volumes:
+      - "${USERDIR}/volumes/readarr/config:/config"
+      - "${USERDIR}/media/books:/books" #optional
+      - "${USERDIR}/downloads/completed:/downloads" #optional
+      - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - 8787:8787
+    networks:
+      - "hms"
+      - "caddy"
+    restart: unless-stopped
 
   bazarr:
     image: linuxserver/bazarr:latest
     container_name: bazarr
     hostname: bazarr
     expose:
-      - '6767'
+      - "6767"
     restart: always
     env_file:
-      - '../env/common.env'
+      - "../env/common.env"
     volumes:
-      - '${USERDIR}/volumes/bazarr/config:/config:z'
-      - '${USERDIR}/media/tv-shows:/tv-shows'
-      - '${USERDIR}/media/movies:/movies'
-      - '/etc/localtime:/etc/localtime:ro'
-    networks: 
-      - 'hms'
-      - 'caddy'
+      - "${USERDIR}/volumes/bazarr/config:/config:z"
+      - "${USERDIR}/media/tv-shows:/tv-shows"
+      - "${USERDIR}/media/movies:/movies"
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - "hms"
+      - "caddy"
 
   radarr:
     image: linuxserver/radarr:latest
     container_name: radarr
     hostname: radarr
     expose:
-      - '7878'
+      - "7878"
     # ports:
     #   - 7878:7878
     restart: always
     env_file:
-      - '../env/common.env'
+      - "../env/common.env"
     volumes:
-      - '${USERDIR}/volumes/radarr/config:/config:z'
-      - '${USERDIR}/downloads/completed:/downloads'
-      - '${USERDIR}/media/movies:/movies'
-      - '/etc/localtime:/etc/localtime:ro'
-    networks: 
-      - 'hms'
-      - 'caddy'
+      - "${USERDIR}/volumes/radarr/config:/config:z"
+      - "${USERDIR}/downloads/completed:/downloads"
+      - "${USERDIR}/media/movies:/movies"
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - "hms"
+      - "caddy"
 
   sonarr:
     image: linuxserver/sonarr:latest
     container_name: sonarr
     hostname: sonarr
     expose:
-      - '8989'
-    # ports: 
+      - "8989"
+    # ports:
     #   - 8989:8989
     restart: always
     env_file:
-      - '../env/common.env'
+      - "../env/common.env"
     volumes:
-      - '${USERDIR}/volumes/sonarr/config:/config:z'
-      - '${USERDIR}/downloads/completed:/downloads'
-      - '${USERDIR}/media/tv-shows:/tv-shows'
-      - '/etc/localtime:/etc/localtime:ro'
-    networks: 
-      - 'hms'
-      - 'caddy'
+      - "${USERDIR}/volumes/sonarr/config:/config:z"
+      - "${USERDIR}/downloads/completed:/downloads"
+      - "${USERDIR}/media/tv-shows:/tv-shows"
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - "hms"
+      - "caddy"
 
   prowlarr:
     image: linuxserver/prowlarr:nightly
     container_name: prowlarr
     restart: always
     expose:
-      - '9696'
+      - "9696"
     # ports:
     #   - '9696:9696'
-    env_file: 
-      - '../env/common.env'
+    env_file:
+      - "../env/common.env"
     networks:
-      - 'hms'
-      - 'caddy'
+      - "hms"
+      - "caddy"
 
   torrent:
-    image: 'linuxserver/qbittorrent:latest'
+    image: "linuxserver/qbittorrent:latest"
     container_name: torrent
     restart: always
     env_file:
-      - '../env/common.env'
-      - '../env/qbit.env'
+      - "../env/common.env"
+      - "../env/qbit.env"
     expose:
-      - '8080'
+      - "8080"
     volumes:
-      - '${USERDIR}/volumes/qbittorrent/config:/config:z'
-      - '${USERDIR}/downloads/completed:/downloads'
-      - '/share:/share'
-    networks: 
-      - 'hms'
-      - 'caddy'
+      - "${USERDIR}/volumes/qbittorrent/config:/config:z"
+      - "${USERDIR}/downloads/completed:/downloads"
+      - "/share:/share"
+    networks:
+      - "hms"
+      - "caddy"
