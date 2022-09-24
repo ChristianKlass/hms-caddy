@@ -26,25 +26,13 @@ bazarr.{$LOCAL_DOMAIN}:80/* {
   reverse_proxy bazarr:6767
 }
 
-sonarr.{$LOCAL_DOMAIN}:80/* {
-  reverse_proxy sonarr:8989
-}
-
-radarr.{$LOCAL_DOMAIN}:80/* {
-  reverse_proxy radarr:7878
-}
-
-jellyfin.{$LOCAL_DOMAIN}:80/* {
-  reverse_proxy jellyfin:8096
-}
-
 adguard.{$LOCAL_DOMAIN}:80/* {
   reverse_proxy adguard-home:80
 }
 
 downloads.{$LOCAL_DOMAIN}:80 {
   reverse_proxy torrent:8080
-}  
+}
 
 :2020 {
   metrics
