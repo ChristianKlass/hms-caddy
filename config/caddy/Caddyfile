@@ -2,10 +2,6 @@
 	auto_https disable_redirects
 }
 
-cloud.{$LOCAL_DOMAIN}:80/* {
-  reverse_proxy nextcloud:80
-}
-
 grafana.{$LOCAL_DOMAIN}:80/* {
   reverse_proxy grafana:3000
 }
