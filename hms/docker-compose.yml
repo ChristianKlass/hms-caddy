@@ -3,7 +3,7 @@ version: "3.6"
 networks:
   hms:
     external: false
-  caddy:
+  cloudflared-md.tk:
     external: true
 
 services:
@@ -25,7 +25,7 @@ services:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.${DOMAIN}
     networks:
       - "hms"
-      - "caddy"
+      - "cloudflared-md.tk"
     ports:
       - 8096:8096
       - 1900:1900/udp
@@ -46,7 +46,7 @@ services:
       - 8787:8787
     networks:
       - "hms"
-      - "caddy"
+      - "cloudflared-md.tk"
     restart: unless-stopped
 
   bazarr:
@@ -65,7 +65,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     networks:
       - "hms"
-      - "caddy"
+      - "cloudflared-md.tk"
 
   radarr:
     image: linuxserver/radarr:latest
@@ -85,7 +85,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     networks:
       - "hms"
-      - "caddy"
+      - "cloudflared-md.tk"
 
   sonarr:
     image: linuxserver/sonarr:latest
@@ -105,7 +105,7 @@ services:
       - "/etc/localtime:/etc/localtime:ro"
     networks:
       - "hms"
-      - "caddy"
+      - "cloudflared-md.tk"
 
   prowlarr:
     image: linuxserver/prowlarr:nightly
@@ -119,7 +119,7 @@ services:
       - "../env/common.env"
     networks:
       - "hms"
-      - "caddy"
+      - "cloudflared-md.tk"
 
   torrent:
     image: "linuxserver/qbittorrent:latest"
@@ -136,4 +136,4 @@ services:
       - "/share:/share"
     networks:
       - "hms"
-      - "caddy"
+      - "cloudflared-md.tk"
