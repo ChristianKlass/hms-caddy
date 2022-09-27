@@ -141,4 +141,5 @@ services:
       - "/share:/share"
     networks:
       - "hms"
+      - "caddy"
       - "cloudflared-md.tk"
