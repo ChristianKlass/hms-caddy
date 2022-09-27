@@ -16,14 +16,5 @@ echo "Logs in $(pwd)/$LOG_FILE"
 echo "---------"
 $D_COMPOSE pull 
 $D_COMPOSE up -d
-echo "---------"
-$D_COMPOSE -f hms/docker-compose.yml pull
-$D_COMPOSE -f hms/docker-compose.yml up -d --remove-orphans
-echo "---------" 
-$D_COMPOSE -f monitor/docker-compose.yml pull
-$D_COMPOSE -f monitor/docker-compose.yml up -d --remove-orphans
-echo "---------"
-$D_COMPOSE -f storage/docker-compose.yml pull 
-$D_COMPOSE -f storage/docker-compose.yml up -d --remove-orphans
 echo "##############################" 
 echo " "
